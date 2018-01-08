@@ -26,6 +26,7 @@ setwd("E:/Grad School/Candid Critters Project/Descriptive Stats Code")
 #edited properly below. ~~~ Please see ingest in CandidCritters Github to learn how to extract data from eMammal 
 #Or use the given data csv given with this template to use with this code. 
 dat <-fread(file="sianctapi-selected-observations-5a4bf68d007dc.csv")
+dat<-as.data.table(dat)
 names(dat)#these are the column names
 unique(dat$Subproject)#these are the counties in the dataset
 head(dat, n=30) #These are the first 30 lines of your data
@@ -110,9 +111,9 @@ p<-data %>%mutate(ifelse(any(TI=="FALSE") & data$Deployment.Date < max(data$Depl
 p2<-as.data.frame(p)
 colnames(p2)[25] <- "RM"    #Number 26 corresponds to the number of columns in you dataframe. 
 data<-filter(p2, RM=="keep")
-data[ ,c("TI","RM") :=NULL]
-data
-
+data$TI<-NULL
+data$RM<-NULL
+head(data)
 
 #Another option is to subset the data based on a min and max allowance of deployment nights
 #Remove any sites that have less than 7 days of trap nights or above 250 days
@@ -124,10 +125,9 @@ data<- subset(data, !TrapNights>=250)
 
 ##Checking Species
 #Double check the common names and species names to make sure the data does not have species not present in that area
-CommonName<-unique(data$'Common Name')
-SpeciesName<-unique(data$'Species Name')
-CommonName
-SpeciesName
+unique(data$'Common Name')
+unique(data$'Species Name')
+
 
 #Fix any animal names that are incorrectly spelled
 data$'Common Name'[data$'Common Name' == 'Elk aka Red Deer'] <- 'Elk_Red Deer'
