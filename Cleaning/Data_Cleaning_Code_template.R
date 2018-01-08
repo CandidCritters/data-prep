@@ -5,9 +5,14 @@
 #### Load Necessary Packages #######
 #The below packages are the ones used throughout this code template. Please install
 #and load the below packages before proceeding 
-#If you do not have one of these packages you can install with the following code:
-install.packages("data.table") #Make sure the package you are interested in is in "" 
-library(data.table)   #This is used to data organizing package
+
+#The following code checks if the required packages exist in your library
+#If you do not have that package, it will go ahead and install them.
+list.of.packages<-c("data.table","dplyr")
+new.packages<-list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages))installed.packages(new.packages)
+#Now load the needed packages
+library(data.table)   
 library(dplyr)
 
 #######Loading and organizing data ##########
@@ -63,6 +68,12 @@ SiteInfo[ ,c("Begin","End") :=NULL]
 #Calculate Number of Days Cameras were deployed for
 SiteInfo$TrapNights <- difftime((as.Date(SiteInfo$Retrieval.Date)), (as.Date(SiteInfo$Deployment.Date)), units="days")
 head(SiteInfo)
+
+
+#create a .csv for data on camera site information only data
+write.csv(SiteInfo, file = "E:/Grad School/Candid Critters Project/Descriptive Stats Code/SiteInfo.csv", row.names = FALSE) 
+
+
 #Merge Site Infomation with your subsetted dataframe
 data<- merge(dat, SiteInfo, by =c('Subproject','Deployment Name','Treatment', 'Deploy ID', 'Actual Lon', 'Actual Lat'))
 
@@ -99,6 +110,7 @@ p<-data %>%mutate(ifelse(any(TI=="FALSE") & data$Deployment.Date < max(data$Depl
 p2<-as.data.frame(p)
 colnames(p2)[25] <- "RM"    #Number 26 corresponds to the number of columns in you dataframe. 
 data<-filter(p2, RM=="keep")
+data[ ,c("TI","RM") :=NULL]
 data
 
 
@@ -134,4 +146,4 @@ tail(data, n=30) #These are the last 30 lines of your data
 #Save your saved data in a .csv file to use with other code templates
 #To name the file before saving just change the path to the path you want to save the data at.
 #Replace where I wrote eMammaldata with your desired name. Make sure .csv follows it. 
-write.csv(data, file = "E:/Grad School/Candid critters test R Coding/eMammaldata.csv", row.names = FALSE) 
+write.csv(data, file = "E:/Grad School/Candid Critters Project/Descriptive Stats Code/eMammaldata.csv", row.names = FALSE) 
