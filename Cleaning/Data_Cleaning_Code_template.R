@@ -43,6 +43,9 @@ head(dat, n=5) #Check dat for new columns formated correctly
 dat[ ,c("Begin Time","End Time") :=NULL]
 
 
+#Fix misspelled county names
+data$'Subproject'[data$'Subproject' == 'Allegheny County'] <- 'Alleghany County'
+
 #Determining Deployment Start and End times/dates
 SiteInfo <- dat[,c('Subproject','Deployment Name','Treatment', 'Deploy ID', 'Actual Lon', 'Actual Lat', 'Begin', 'End')]
 #Start Times extraction
