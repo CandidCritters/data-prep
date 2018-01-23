@@ -397,11 +397,6 @@ names(tt)<-c("Deployment Name", "Count", "Duration", "Actual Lat", "Actual Lon")
 tt$Rate<-tt$Count/tt$Duration
 
 #Define the map area and draw it
-
-
-#######WORK ON THIS SECTION ############
-
-
 latrange = range(tt$'Actual Lat') + c(-0.15,0.15)
 lonrange = range(tt$'Actual Lon') + c(-0.15,0.15)
 extent = c(lonrange[1],latrange[1],lonrange[2],latrange[2])
