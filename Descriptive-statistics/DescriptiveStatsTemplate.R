@@ -1,7 +1,5 @@
-####### Emammal Descriptive Stats #########
+######################### Emammal Descriptive Stats ############################
 
-################################################################################
-                        #Load Line 5- Before skipping to any Section 
 ################################################################################
 #### Load Necessary Packages #######
 #The below packages are the ones used throughout this code template. Please install
