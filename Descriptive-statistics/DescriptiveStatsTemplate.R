@@ -410,6 +410,7 @@ mappp<-ggmap(m) + geom_point(data= tt, aes(x=tt$'Actual Lon',y=tt$'Actual Lat', 
   labs(x = "Longitude",y = "Latitude")+
   theme(axis.text = element_text(color="black"))
 
-ggsave(filename=paste(name, species, "_map", ".png",sep=""), mappp, width = 14, height = 14, units = 'cm')
+ggsave("CoyoteMap.png", width = 20, height = 20, units = "cm")
+
 
 
