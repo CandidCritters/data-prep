@@ -131,7 +131,9 @@ ggsave("Detectiongraph1.png", width = 20, height = 20, units = "cm")
 
 
 
-######################## Describing subset of data #############################
+############################################################################################# 
+                             ### Subsetting your data ###
+#############################################################################################
 #Pull the deployments for the protected area you are interested
 #in by entering the name in quotes below.
 
@@ -152,21 +154,11 @@ CountySites <- multiname[,c('Subproject','Deployment Name')] #this gives you a l
 
 
 
+############################################################################################# 
+                  ### Subsetted Data Bar graphs for specific Species ###
+#############################################################################################
 
 ############ Bar graph of relative abundance for subset data ##########
-#Make a boxplot for a specific species across all counties
-multiname$LineDetectionrate<- multiname$Count / multiname$TrapNights
-DetectionRate = multiname[, sum(LineDetectionrate), by=c('Common Name','Deployment Name')] #This generates detecftion rate
-multiname<- merge(DetectionRate, multiname, by=c("Common Name","Deployment Name")) #This calculates each species detection rate per camera
-setnames(multiname, old ='V1', new = 'DetectionRate')  #Renames the column
-County_DetectionRate = multiname[, sum(DetectionRate), by=c('Common Name','Subproject')] 
-multiname<- merge(County_DetectionRate, multiname, by=c("Common Name","Subproject")) #This calculates each species detection rate per camera
-setnames(multiname, old ='V1', new = 'CountyDetectionRate')  #Renames the column
-
-
-
-
-
 #Make data summary, detection rate for each species
 duration <- multiname %>% summarise(duration=mean(TrapNights))
 spp<-unique(data$'Common Name')
@@ -176,10 +168,8 @@ rate<-count$sum/dur
 rate_input<-cbind(count, rate)
 remove_spp<-("American Black Bear|White-tailed Deer|Coyote|Northern Raccoon")
 rrate<-rate_input[grep(remove_spp, rate_input$'Common Name', invert=F),]   #invert = T shows the species not designated in remove_spp. 
-                                                                          #If you made a list of species you are interested in use invert=F
+#If you made a list of species you are interested in use invert=F
 rrate<-rrate[order(-rrate$rate)] #Orders based on which species has the higher Detection rate
-
-
 
 #Make graph showing total capture counts
 rrate<-rrate[order(-rrate$sum)]
@@ -213,13 +203,16 @@ ggsave("Detectiongraph2.png", width = 20, height = 20, units = "cm")
 
 
 
-###############Comparison graph of other sites in county#####
-#This gives a list of the counties for the park you pulled out
-#at the beginning
-unique(data$Subproject) 
 
-#Now use those names to pull out all the data for those
-#counties.  If multiple counties, separate by |.
+
+############################################################################################# 
+                  ### Comparison Bar graphs data organization ###
+#############################################################################################
+
+unique(data$Subproject) #This gives a list of the counties for the park you pulled out at the beginning
+
+#Now use those names to pull out all the data for those counties.
+#If multiple counties, separate by |.
 counties<-paste(unique(data$Subproject), collapse = "|")
 subb_county<-data[grep(counties, data$Subproject),]
 unique(subb_county$Subproject)
@@ -278,6 +271,10 @@ rrate<-rrate[order(-rrate$rate)]
 
 
 
+
+############################################################################################# 
+                    ### Site Comparison Bar graphs to plot ALL species ###
+#############################################################################################
 ###### Determining Species Detection Rates for both Selected area and all counties #####
 #Combine dataframes together
 #First add species to rrate that are only in rrate_co to get complete species detection rates
@@ -312,9 +309,6 @@ rrate4<-rrate4[ order(-rrate4$"Detection Rate")]
 rrate4
 
 
-
-
-######Mapping Count Numbers ######
 #To plot all the species in the rrate4 data frame
 Countgraph3<-ggplot(data=rrate4, aes(x=reorder(rrate4$'Common Name', rrate4$'Count Sum'), y=rrate4$'Count Sum', fill=Area)) +
   geom_bar(stat="identity", color="black", position="dodge")+
@@ -327,7 +321,8 @@ Countgraph3<-ggplot(data=rrate4, aes(x=reorder(rrate4$'Common Name', rrate4$'Cou
 Countgraph3
 ggsave("Countgraph3.png", width = 20, height = 20, units = "cm")
 
-##### Mapping Detection Rate #####
+
+
 #Make graph Detection Rate
 #To plot all the species in the rrate4 data frame
 Detectiongraph3<-ggplot(data=rrate4, aes(x=reorder(rrate4$'Common Name', rrate4$'Detection Rate'), y=rrate4$'Detection Rate', fill=Area)) +
@@ -341,7 +336,14 @@ Detectiongraph3<-ggplot(data=rrate4, aes(x=reorder(rrate4$'Common Name', rrate4$
 Detectiongraph3
 ggsave("Detectiongraph3.png", width = 20, height = 20, units = "cm")
 
-############To plot specific species ########################
+
+
+
+
+
+#############################################################################################
+              ###  Site Comparison Bar graphs to plot specific species ###
+#############################################################################################
 Desiredspp<-("American Black Bear|Coyote|Virginia Opossum|Northern Raccoon|Eastern Grey Squirrel|White-tailed Deer")
 rrate5<-rrate4[grep(Desiredspp, rrate4$'Common Name', invert=F),]
 Detectiongraph4<-ggplot(data=rrate5, aes(x=reorder(rrate5$'Common Name', rrate5$'Detection Rate'), y=rrate5$'Detection Rate', fill=Area)) +
@@ -367,10 +369,198 @@ Countgraph4<-ggplot(data=rrate5, aes(x=reorder(rrate5$'Common Name', rrate5$'Cou
 Countgraph4
 ggsave("Countgraph4.png", width = 20, height = 20, units = "cm")
 
-#Box plot graph species on Y and group size on X
 
-########################Map for a few species###################
-#Define the species you are interested in
+
+
+
+
+
+
+
+################################################################################
+####################### Graphing the data with Boxplots ########################
+################################################################################
+
+
+################################################################################
+                     ###  Boxplots using all data ###
+################################################################################
+# All Species Count/Detection in entire dataset boxplot - by camera Deployment
+#Remove species groups that are unknown, humans, or not species
+remove_spp_co<-("Camera Trapper|No Animal|Unknown Animal|Vehicle|Unknown Squirrel|Unknown Small Rodent|Unknown Rabbit_Hare|Unknown Flying Squirrel|Unknown Felid|Unknown Coati_Raccoon|Unknown Canid|Unknown Bird|Time Lapse|Reptile species|Raptor species|Owl species|Other Bird species|Northern Bobwhite|Human non-staff|Common Raven|Calibration Photos|Blue Jay|Bicycle|Animal Not on List|American Crow")
+boxplotdata<-data[grep(remove_spp_co, data$'Common Name', invert=T),] #This removes stated species from list.
+dataCapturecount <- data[,list (Capturecount=sum(Count)), by=c('Common Name','Deployment Name')]
+boxplotdata1<-merge(dataCapturecount, boxplotdata, by=c('Common Name','Deployment Name'))
+Nights<-data[!duplicated(data$'Deployment Name'),] 
+TotalTrapNights<-Nights[,list(TotalNights=sum(TrapNights)), by="Deployment Name"]
+boxplotdata1<-merge(TotalTrapNights, boxplotdata1, by="Deployment Name")
+
+# Counts of species per all camera sites in the entire dataset boxplot - For camera Deployment 
+
+Boxplot1<-ggplot(data=boxplotdata1) + geom_boxplot (aes(x=boxplotdata1$'Common Name',y=boxplotdata1$Capturecount),fill="darkseagreen4")
+Boxplot1 + labs(title = "Species photographic capture count for all camera sites", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+
+
+# Detection Rate of species per all camera sites in the entire dataset boxplot - For camera Deployment 
+#Calculate Detection for Total Counts / Total Trap Nights for the entire dataset
+boxplotdata1$Detection<- boxplotdata1$Capturecount / boxplotdata1$TotalNights
+
+Boxplot2<-ggplot(data=boxplotdata1) + geom_boxplot (aes(x=boxplotdata1$'Common Name',y=boxplotdata1$Detection),fill="darkseagreen4")
+Boxplot2 + labs(title = "Species Detection for all camera sites", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+
+
+
+
+
+######## Total Detection of species in entire dataset boxplot by County #################
+dataCapturecount <- data[,list (Capturecount=sum(Count)), by=c('Common Name','Subproject')]
+boxplotdata2<-merge(dataCapturecount, boxplotdata, by=c('Common Name','Subproject'))
+Nights<-data[!duplicated(data$'Subproject'),] 
+TotalTrapNights<-Nights[,list(TotalNights=sum(TrapNights)), by="Subproject"]
+boxplotdata2<-merge(TotalTrapNights, boxplotdata2, by="Subproject")
+
+# Counts of species per all camera sites in the entire dataset boxplot - by County (Subproject)
+
+Boxplot3<-ggplot(data=boxplotdata2) + geom_boxplot (aes(x=boxplotdata2$'Common Name',y=boxplotdata2$Capturecount),fill="deepskyblue4")
+Boxplot3 + labs(title = "Species photographic capture count by county", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+
+
+# Detection Rate of species per all camera sites in the entire dataset boxplot - by county (Subproject)
+#Calculate Detection for Total Counts / Total Trap Nights for the entire dataset
+boxplotdata2$Detection<- boxplotdata2$Capturecount / boxplotdata2$TotalNights
+
+Boxplot4<-ggplot(data=boxplotdata2) + geom_boxplot (aes(x=boxplotdata2$'Common Name',y=boxplotdata2$Detection),fill="deepskyblue4")
+Boxplot4 + labs(title = "Species Detection Rate by county", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+
+
+
+################################################################################
+           ###  Boxplots for specific species across all sites  ###
+################################################################################
+#specify the species that you are interested in using for boxplots
+spp_interested<-("White-tailed Deer|Coyote|American Black Bear|Northern Raccoon|Domestic Dog|Domestic Cat|Bobcat|Virginia Opossum")
+boxplotdata3<-data[grep(spp_interested, data$'Common Name', invert=F),]
+
+
+#Make a boxplot for multiple specific species across subsetted camera sites
+dataCapturecount <- boxplotdata3[,list (Capturecount=sum(Count)), by=c('Common Name','Deployment Name')]
+trapinfo<-  boxplotdata3[,c('TrapNights','Deployment Name','Subproject','Project')]
+trapinfo<-trapinfo[!duplicated(trapinfo$'Deployment Name'),] 
+boxplotdata3<-merge(dataCapturecount, trapinfo, by='Deployment Name')
+boxplotdata3$Detection<- boxplotdata3$Capturecount / boxplotdata3$TrapNights
+
+#Capture Counts for specific species across subsetted camera sites
+Boxplot5<-ggplot(data=boxplotdata3) + geom_boxplot (aes(x=boxplotdata3$'Common Name',y=boxplotdata3$Capturecount),fill="seagreen3")
+Boxplot5 + labs(title = "Species photographic capture count by camera site", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=8, vjust=0.55))
+
+
+
+Boxplot6<-ggplot(data=boxplotdata3) + geom_boxplot (aes(x=boxplotdata3$'Common Name',y=boxplotdata3$Detection),fill="seagreen3")
+Boxplot6 + labs(title = "Species Detection Rate by site", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=8, vjust=0.55))
+
+
+
+
+
+
+######## Make a boxplot for multiple specific species across subsetted  by County #################
+dataCapturecount <- boxplotdata3[,list (Countycount=sum(Capturecount)), by=c('Common Name','Subproject')]
+trapinfo<-  boxplotdata3[,c('TrapNights','Deployment Name','Subproject','Project')]
+trapinfo<-trapinfo[,list(TotalNights=sum(TrapNights)), by="Subproject"]
+trapinfo<-trapinfo[!duplicated(trapinfo$'Subproject'),]
+boxplotdata4<-merge(dataCapturecount, trapinfo, by=('Subproject'))
+
+boxplotdata4$Detection<- boxplotdata4$Countycount / boxplotdata4$TotalNights
+
+# Counts of specific species per subset camera sites boxplot - by County (Subproject)
+Boxplot7<-ggplot(data=boxplotdata4) + geom_boxplot (aes(x=boxplotdata4$'Common Name',y=boxplotdata4$Countycount),fill="deepskyblue4")
+Boxplot7 + labs(title = "Species photographic capture count by county", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+
+
+# Detection Rate of specific species per subset camera sites boxplot - by County (Subproject)
+Boxplot8<-ggplot(data=boxplotdata4) + geom_boxplot (aes(x=boxplotdata4$'Common Name',y=boxplotdata4$Detection),fill="deepskyblue4")
+Boxplot8 + labs(title = "Species Detection Rate by county", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+
+
+
+
+
+
+
+################################################################################
+          ###  Boxplots for subsetted data and specific species ###
+################################################################################
+#Subset your data for the information you are interested to see as a boxplot
+#Note smaller groupings such as one or two species or just a select few counties work best
+
+
+multiname<-subset(data, Subproject %in% c("Wake County","Ashe County","Dare County")) #Run this if you want multiple names
+CountySites <- multiname[,c('Subproject','Deployment Name')] #this gives you a list of all the camera deployments in each county
+
+#specify the species that you are interested in using for boxplots
+spp_interested<-("White-tailed Deer|Coyote|American Black Bear|Northern Raccoon|Domestic Dog|Domestic Cat|Bobcat|Virginia Opossum")
+boxplotdata5<-multiname[grep(spp_interested, multiname$'Common Name', invert=F),]
+
+
+
+#Make a boxplot for multiple specific species across subsetted camera sites
+dataCapturecount <- boxplotdata5[,list (Capturecount=sum(Count)), by=c('Common Name','Deployment Name')]
+trapinfo<-  boxplotdata5[,c('TrapNights','Deployment Name','Subproject','Project')]
+trapinfo<-trapinfo[!duplicated(trapinfo$'Deployment Name'),] 
+boxplotdata5<-merge(dataCapturecount, trapinfo, by='Deployment Name')
+boxplotdata5$Detection<- boxplotdata5$Capturecount / boxplotdata5$TrapNights
+
+#Capture Counts for specific species across subsetted camera sites
+Boxplot9<-ggplot(data=boxplotdata5) + geom_boxplot (aes(x=boxplotdata5$'Common Name',y=boxplotdata5$Capturecount),fill="seagreen3")
+Boxplot9 + labs(title = "Species photographic capture count by camera site", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=8, vjust=0.55))
+
+
+#Detection Rate for specific species across subsetted camera sites
+Boxplot10<-ggplot(data=boxplotdata5) + geom_boxplot (aes(x=boxplotdata5$'Common Name',y=boxplotdata5$Detection),fill="seagreen3")
+Boxplot10 + labs(title = "Species Detection Rate by site", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=8, vjust=0.55))
+
+
+
+
+######## Make a boxplot for multiple specific species across subsetted County #################
+dataCapturecount <- boxplotdata5[,list (Countycount=sum(Capturecount)), by=c('Common Name','Subproject')]
+trapinfo<-  boxplotdata5[,c('TrapNights','Deployment Name','Subproject','Project')]
+trapinfo<-trapinfo[,list(TotalNights=sum(TrapNights)), by="Subproject"]
+trapinfo<-trapinfo[!duplicated(trapinfo$'Subproject'),]
+boxplotdata6<-merge(dataCapturecount, trapinfo, by=('Subproject'))
+
+boxplotdata6$Detection<- boxplotdata6$Countycount / boxplotdata6$TotalNights
+
+# Counts of specific species per subset  by County (Subproject)
+Boxplot11<-ggplot(data=boxplotdata6) + geom_boxplot (aes(x=boxplotdata6$'Common Name',y=boxplotdata6$Countycount),fill="deepskyblue4")
+Boxplot11 + labs(title = "Species photographic capture count by county", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+
+
+# Detection Rate of specific species per subset by County (Subproject)
+Boxplot12<-ggplot(data=boxplotdata6) + geom_boxplot (aes(x=boxplotdata6$'Common Name',y=boxplotdata6$Detection),fill="deepskyblue4")
+Boxplot12 + labs(title = "Species Detection Rate by county", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
+#####################  Species of Interest Maps  ###############################
+################################################################################
+
+
+################################################################################
+                   #### Map making data organization ###
+################################################################################
+
+#Define the species you are interested in such as "Coyote"
 #Must match this list:
 unique(data$'Common Name')
 
@@ -394,30 +584,54 @@ tt<-cbind(count, duration$x, lat$x, long$x)
 names(tt)<-c("Deployment Name", "Count", "Duration", "Actual Lat", "Actual Lon")
 tt$Rate<-tt$Count/tt$Duration
 
-#Define the map area and draw it
+#Define the map area
 latrange = range(tt$'Actual Lat') + c(-0.15,0.15)
 lonrange = range(tt$'Actual Lon') + c(-0.15,0.15)
 extent = c(lonrange[1],latrange[1],lonrange[2],latrange[2])
 m = get_map(extent, maptype="terrain")
 ggmap(m)
 
-mappp<-ggmap(m) + geom_point(data= tt, aes(x=tt$'Actual Lon',y=tt$'Actual Lat', size=Rate))+scale_colour_gradient2(low="white", 
-                                                                                                                   mid="purple",high="blue", midpoint=0.2, breaks=c(0,0.2,0.4), 
-                                                                                                                   labels=c("0","0.2","0.5"), name="Detection Rate\n(count/day)")+
+
+################################################################################
+             #### Detection and Count Map for specific species###
+################################################################################
+detectmap<-ggmap(m) + geom_point(data= tt, aes(x=tt$'Actual Lon',y=tt$'Actual Lat', size=Rate))+
+  scale_colour_gradient2(low="white",mid="purple",high="blue", midpoint=0.2, breaks=c(0,0.2,0.4), labels=c("0","0.2","0.5"), name="Detection Rate\n(count/day)")+
   theme(text=element_text(size=12))+
-  labs(x = "Longitude",y = "Latitude")+
+  labs(x = "Longitude",y = "Latitude", title="Coyote detection rate throughout NC")+
   theme(axis.text = element_text(color="black"))
 
-ggsave("CoyoteMap.png", width = 20, height = 20, units = "cm")
+detectmap
+
+ggsave("CoyotedetectionMap.png", width = 20, height = 20, units = "cm")
+
+
+countmap<-ggmap(m) + geom_point(data= tt, aes(x=tt$'Actual Lon',y=tt$'Actual Lat', size=Count))+
+  scale_colour_gradient2(low="white",mid="purple",high="blue", midpoint=0.2, breaks=c(0,0.2,0.4),labels=c("0","0.2","0.5"), name="Detection Rate\n(count/day)")+
+  theme(text=element_text(size=12))+
+  labs(x = "Longitude",y = "Latitude", title="Coyote photographic capture count throughout NC")+
+  theme(axis.text = element_text(color="black"))
+
+countmap
+
+ggsave("CoyotecountMap.png", width = 20, height = 20, units = "cm")
 
 
 
 
 
-####### Plotting Activity Patterns #########
-library(activity)
-library(overlap)
 
+
+
+
+################################################################################
+#####################      Activity Patterns     ###############################
+################################################################################
+
+
+################################################################################
+ ### Data organization for plotting Activity Patterns of specific species ###
+################################################################################
 
 names(data)
 head(data, n=3)
@@ -438,7 +652,6 @@ data$seconds<-data$seconds / 60
 data$totalminutes<-data$hours + data$mins + data$seconds
 
 data[,!c("Times1","Times2","Times3"), with=F]
-
 data$totalminutes<-apply(data, MARGIN=2, 
                              FUN=function(x) (data$totalminutes-min(data$totalminutes))/diff(range(data$totalminutes)))
 
@@ -448,6 +661,14 @@ summary(data$totalminutes)
 data$radians <- data$totalminutes * 2 * pi  #This turns total minutes into radians
 #Time is now converted into radians
 
+
+
+
+
+
+################################################################################
+             ### Activity Density Plots for specific species  ###
+################################################################################
 
 
 #Activity patterns can only plot a species at a time so you will need to subset the data
@@ -482,7 +703,15 @@ dev.copy(jpeg,filename="E:/Grad School/Candid Critters Project/Thesis R Code/tem
 dev.off ()
 
 
-########################### Overlaping Species ################################
+
+
+
+
+
+
+################################################################################
+             ### Determing species activity pattern overlap  ###
+################################################################################
 
 
 #Plot the density of two species in relation to time while highlighting periods
