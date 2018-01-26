@@ -1,4 +1,4 @@
-########################## Emammal Descriptive Stats ############################
+######################### Emammal Descriptive Stats ############################
 
 ################################################################################
 #### Load Necessary Packages #######
@@ -422,7 +422,7 @@ boxplotdata2<-merge(TotalTrapNights, boxplotdata2, by="Subproject")
 # Counts of species per all camera sites in the entire dataset boxplot - by County (Subproject)
 
 Boxplot3<-ggplot(data=boxplotdata2) + geom_boxplot (aes(x=boxplotdata2$'Common Name',y=boxplotdata2$Capturecount),fill="deepskyblue4")
-Boxplot3 + labs(title = "Species photographic capture count by county", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+Boxplot3 + labs(title = "Species photographic capture for all counties", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
 
 
 # Detection Rate of species per all camera sites in the entire dataset boxplot - by county (Subproject)
@@ -430,7 +430,7 @@ Boxplot3 + labs(title = "Species photographic capture count by county", x='Speci
 boxplotdata2$Detection<- boxplotdata2$Capturecount / boxplotdata2$TotalNights
 
 Boxplot4<-ggplot(data=boxplotdata2) + geom_boxplot (aes(x=boxplotdata2$'Common Name',y=boxplotdata2$Detection),fill="deepskyblue4")
-Boxplot4 + labs(title = "Species Detection Rate by county", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+Boxplot4 + labs(title = "Species Detection Rate for all counties", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
 
 
 
@@ -451,12 +451,12 @@ boxplotdata3$Detection<- boxplotdata3$Capturecount / boxplotdata3$TrapNights
 
 #Capture Counts for specific species across subsetted camera sites
 Boxplot5<-ggplot(data=boxplotdata3) + geom_boxplot (aes(x=boxplotdata3$'Common Name',y=boxplotdata3$Capturecount),fill="seagreen3")
-Boxplot5 + labs(title = "Species photographic capture count by camera site", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=8, vjust=0.55))
+Boxplot5 + labs(title = "Species photographic capture count for subsetted camera sites", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=8, vjust=0.55))
 
 
 
 Boxplot6<-ggplot(data=boxplotdata3) + geom_boxplot (aes(x=boxplotdata3$'Common Name',y=boxplotdata3$Detection),fill="seagreen3")
-Boxplot6 + labs(title = "Species Detection Rate by site", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=8, vjust=0.55))
+Boxplot6 + labs(title = "Species Detection Rate for subsetted camera sites", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=8, vjust=0.55))
 
 
 
@@ -474,12 +474,12 @@ boxplotdata4$Detection<- boxplotdata4$Countycount / boxplotdata4$TotalNights
 
 # Counts of specific species per subset camera sites boxplot - by County (Subproject)
 Boxplot7<-ggplot(data=boxplotdata4) + geom_boxplot (aes(x=boxplotdata4$'Common Name',y=boxplotdata4$Countycount),fill="deepskyblue4")
-Boxplot7 + labs(title = "Species photographic capture count by county", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+Boxplot7 + labs(title = "Species photographic capture count for subsetted counties", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
 
 
 # Detection Rate of specific species per subset camera sites boxplot - by County (Subproject)
 Boxplot8<-ggplot(data=boxplotdata4) + geom_boxplot (aes(x=boxplotdata4$'Common Name',y=boxplotdata4$Detection),fill="deepskyblue4")
-Boxplot8 + labs(title = "Species Detection Rate by county", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+Boxplot8 + labs(title = "Species Detection Rate for subsetted counties", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
 
 
 
@@ -512,12 +512,12 @@ boxplotdata5$Detection<- boxplotdata5$Capturecount / boxplotdata5$TrapNights
 
 #Capture Counts for specific species across subsetted camera sites
 Boxplot9<-ggplot(data=boxplotdata5) + geom_boxplot (aes(x=boxplotdata5$'Common Name',y=boxplotdata5$Capturecount),fill="seagreen3")
-Boxplot9 + labs(title = "Species photographic capture count by camera site", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=8, vjust=0.55))
+Boxplot9 + labs(title = "Species photographic capture count for subsetted camera sites", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=8, vjust=0.55))
 
 
 #Detection Rate for specific species across subsetted camera sites
 Boxplot10<-ggplot(data=boxplotdata5) + geom_boxplot (aes(x=boxplotdata5$'Common Name',y=boxplotdata5$Detection),fill="seagreen3")
-Boxplot10 + labs(title = "Species Detection Rate by site", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=8, vjust=0.55))
+Boxplot10 + labs(title = "Species Detection Rate for subsetted camera sites", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=8, vjust=0.55))
 
 
 
@@ -533,12 +533,12 @@ boxplotdata6$Detection<- boxplotdata6$Countycount / boxplotdata6$TotalNights
 
 # Counts of specific species per subset  by County (Subproject)
 Boxplot11<-ggplot(data=boxplotdata6) + geom_boxplot (aes(x=boxplotdata6$'Common Name',y=boxplotdata6$Countycount),fill="deepskyblue4")
-Boxplot11 + labs(title = "Species photographic capture count by county", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+Boxplot11 + labs(title = "Species photographic capture count for subsetted counties", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
 
 
 # Detection Rate of specific species per subset by County (Subproject)
 Boxplot12<-ggplot(data=boxplotdata6) + geom_boxplot (aes(x=boxplotdata6$'Common Name',y=boxplotdata6$Detection),fill="deepskyblue4")
-Boxplot12 + labs(title = "Species Detection Rate by county", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
+Boxplot12 + labs(title = "Species Detection Rate for subsetted counties", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
 
 
 
