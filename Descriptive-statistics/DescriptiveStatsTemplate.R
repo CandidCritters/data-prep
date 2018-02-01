@@ -66,12 +66,12 @@ write.csv(DeploymentNightTable, file = "E:/Grad School/NSF Grant/Candid critters
 write.table(DeploymentNightTable, file = "E:/Grad School/NSF Grant/Candid critters test R Coding/CameraNightTable.txt", row.names = FALSE)
 
 
-#Total and average Trap Night per county(Subproject)
-CountyTrapNights = SiteInfo[, sum(TrapNights), by='Subproject'] 
-names(CountyTrapNights)<-c("County", "Camera Nights")
-CountyTrapNights
-AverageCountyTrapNight<- SiteInfo[, mean(TrapNights), by="Subproject"]
-AverageCountyTrapNight
+#Total and average Trap Night per Subproject
+SubprojectTrapNights = SiteInfo[, sum(TrapNights), by='Subproject'] 
+names(SubprojectTrapNights)<-c("Subproject", "Camera Nights")
+SubprojectTrapNights
+AverageSubprojectTrapNight<- SiteInfo[, mean(TrapNights), by="Subproject"]
+AverageSubprojectTrapNight
 
 
 
@@ -139,7 +139,7 @@ ggsave("Detectiongraph1.png", width = 20, height = 20, units = "cm")
 
 subb <- subset(data, Subproject == "Wake County") #Run this if you are interested in only one name
 multiname<-subset(data, Subproject %in% c("Wake County","Ashe County","Dare County")) #Run this if you want multiple names
-CountySites <- multiname[,c('Subproject','Deployment Name')] #this gives you a list of all the camera deployments in each county
+SubprojectSites <- multiname[,c('Subproject','Deployment Name')] #this gives you a list of all the camera deployments in each Subproject
 
 
 
@@ -198,7 +198,6 @@ Detectiongraph2<-ggplot(data=rrate, aes(x=reorder(rrate$'Common Name', rate), y=
   theme(axis.text.x = element_text(angle = 90, hjust = 1, color="black"))+
   theme(axis.text.y = element_text(color="black"))
 Detectiongraph2
-ggsave(filename=paste(name, "_Detection Rate Bar Plot", ".png",sep=""), g, width = 20, height = 14, units = 'cm')
 ggsave("Detectiongraph2.png", width = 20, height = 20, units = "cm")
 
 
@@ -214,11 +213,11 @@ unique(data$Subproject) #This gives a list of the counties for the park you pull
 #Now use those names to pull out all the data for those counties.
 #If multiple counties, separate by |.
 counties<-paste(unique(data$Subproject), collapse = "|")
-subb_county<-data[grep(counties, data$Subproject),]
-unique(subb_county$Subproject)
+subb_Subproject<-data[grep(counties, data$Subproject),]
+unique(subb_Subproject$Subproject)
 
 #Calculate duration
-z_co <- subb_county[,c('Deployment Name','ID Type', 'Deploy ID', 'Actual Lon', 'Actual Lat', 'Begin', 'End','TrapNights')]
+z_co <- subb_Subproject[,c('Deployment Name','ID Type', 'Deploy ID', 'Actual Lon', 'Actual Lat', 'Begin', 'End','TrapNights')]
 z_co<-as.data.table(z_co)
 
 
@@ -248,7 +247,7 @@ setnames(z_times, old = c('Begin.Time1','End.Time1', 'Begin', 'End'), new = c('B
 #Calculate Total Days Samples
 z_times$TrapNights <- difftime((as.Date(z_times$End.Date)), (as.Date(z_times$Begin.Date)), units="days")
 head(z_times)
-z_data<- merge(subb_county, z_times, by =c('Deployment Name','ID Type', 'Deploy ID', 'Actual Lon', 'Actual Lat','TrapNights'))
+z_data<- merge(subb_Subproject, z_times, by =c('Deployment Name','ID Type', 'Deploy ID', 'Actual Lon', 'Actual Lat','TrapNights'))
 
 
 #Make data summary, rate for each species in other counties
@@ -278,7 +277,7 @@ rrate<-rrate[order(-rrate$rate)]
 ###### Determining Species Detection Rates for both Selected area and all counties #####
 #Combine dataframes together
 #First add species to rrate that are only in rrate_co to get complete species detection rates
-missing_spp<-subset(rrate_co, !(rrate_co$'Common Name' %in% rrate$'Common Name'))   #This shows if any species shows up in other county, but not your selected site
+missing_spp<-subset(rrate_co, !(rrate_co$'Common Name' %in% rrate$'Common Name'))   #This shows if any species shows up in other Subproject, but not your selected site
 missing_spp$sum[missing_spp$sum>0]  <- 0   #Missing species will have their counts set to 0
 missing_spp$rate[missing_spp$rate>0]  <- 0   #Missing species will have their detection rates set to 0
 rrate2<-rbind(rrate, missing_spp)   #Combines original subset dataframe with 
@@ -288,18 +287,18 @@ missing_spp2$rate[missing_spp2$rate>0]  <- 0   #Missing species will have their 
 rrate_co<-rbind(rrate_co, missing_spp2)   #Combines original subset dataframe with 
 
 
-#Then combine the protected area and county data into one
+#Then combine the protected area and Subproject data into one
 #dataframe
-rrate_co<-rrate_co[ order(rrate_co[,1]), ]    #All county data 
+rrate_co<-rrate_co[ order(rrate_co[,1]), ]    #All Subproject data 
 rrate2<-rrate2[ order(rrate2[,1]), ]          #Selected area data
 rrate3<-cbind(rrate2, rrate_co$rate)
-names(rrate3)<-c("Common Name","Count Sum", "Selected Area Rate", "County Rate")
+names(rrate3)<-c("Common Name","Count Sum", "Selected Area Rate", "Subproject Rate")
 #Order In Alphabetical order
 rrate3<-rrate3[ order(rrate3[,1]), ]
 rrate3
 
-###### Make a data frame with Detection Rate isolated for selected area and county ####
-rrate_co$Area<-rep("County", nrow(rrate_co))
+###### Make a data frame with Detection Rate isolated for selected area and Subproject ####
+rrate_co$Area<-rep("Subproject", nrow(rrate_co))
 rrate2$Area<-rep("Selected Area", nrow(rrate2))
 rrate4<-rbind(rrate2, rrate_co)    #Combines all data frames together.
 names(rrate4)<-c("Common Name","Count Sum", "Detection Rate", "Area")
@@ -412,20 +411,20 @@ Boxplot2 + labs(title = "Species Detection for all camera sites", x='Species', y
 
 
 
-######## Total Detection of species in entire dataset boxplot by County #################
+######## Total Detection of species in entire dataset boxplot by Subproject #################
 dataCapturecount <- data[,list (Capturecount=sum(Count)), by=c('Common Name','Subproject')]
 boxplotdata2<-merge(dataCapturecount, boxplotdata, by=c('Common Name','Subproject'))
 Nights<-data[!duplicated(data$'Subproject'),] 
 TotalTrapNights<-Nights[,list(TotalNights=sum(TrapNights)), by="Subproject"]
 boxplotdata2<-merge(TotalTrapNights, boxplotdata2, by="Subproject")
 
-# Counts of species per all camera sites in the entire dataset boxplot - by County (Subproject)
+# Counts of species per all camera sites in the entire dataset boxplot - by Subproject 
 
 Boxplot3<-ggplot(data=boxplotdata2) + geom_boxplot (aes(x=boxplotdata2$'Common Name',y=boxplotdata2$Capturecount),fill="deepskyblue4")
 Boxplot3 + labs(title = "Species photographic capture for all counties", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
 
 
-# Detection Rate of species per all camera sites in the entire dataset boxplot - by county (Subproject)
+# Detection Rate of species per all camera sites in the entire dataset boxplot - by Subproject
 #Calculate Detection for Total Counts / Total Trap Nights for the entire dataset
 boxplotdata2$Detection<- boxplotdata2$Capturecount / boxplotdata2$TotalNights
 
@@ -463,21 +462,21 @@ Boxplot6 + labs(title = "Species Detection Rate for subsetted camera sites", x='
 
 
 
-######## Make a boxplot for multiple specific species across subsetted  by County #################
-dataCapturecount <- boxplotdata3[,list (Countycount=sum(Capturecount)), by=c('Common Name','Subproject')]
+######## Make a boxplot for multiple specific species across subsetted  by Subproject #################
+dataCapturecount <- boxplotdata3[,list (Subprojectcount=sum(Capturecount)), by=c('Common Name','Subproject')]
 trapinfo<-  boxplotdata3[,c('TrapNights','Deployment Name','Subproject','Project')]
 trapinfo<-trapinfo[,list(TotalNights=sum(TrapNights)), by="Subproject"]
 trapinfo<-trapinfo[!duplicated(trapinfo$'Subproject'),]
 boxplotdata4<-merge(dataCapturecount, trapinfo, by=('Subproject'))
 
-boxplotdata4$Detection<- boxplotdata4$Countycount / boxplotdata4$TotalNights
+boxplotdata4$Detection<- boxplotdata4$Subprojectcount / boxplotdata4$TotalNights
 
-# Counts of specific species per subset camera sites boxplot - by County (Subproject)
-Boxplot7<-ggplot(data=boxplotdata4) + geom_boxplot (aes(x=boxplotdata4$'Common Name',y=boxplotdata4$Countycount),fill="deepskyblue4")
+# Counts of specific species per subset camera sites boxplot - by Subproject (Subproject)
+Boxplot7<-ggplot(data=boxplotdata4) + geom_boxplot (aes(x=boxplotdata4$'Common Name',y=boxplotdata4$Subprojectcount),fill="deepskyblue4")
 Boxplot7 + labs(title = "Species photographic capture count for subsetted counties", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
 
 
-# Detection Rate of specific species per subset camera sites boxplot - by County (Subproject)
+# Detection Rate of specific species per subset camera sites boxplot - by Subproject (Subproject)
 Boxplot8<-ggplot(data=boxplotdata4) + geom_boxplot (aes(x=boxplotdata4$'Common Name',y=boxplotdata4$Detection),fill="deepskyblue4")
 Boxplot8 + labs(title = "Species Detection Rate for subsetted counties", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
 
@@ -495,7 +494,7 @@ Boxplot8 + labs(title = "Species Detection Rate for subsetted counties", x='Spec
 
 
 multiname<-subset(data, Subproject %in% c("Wake County","Ashe County","Dare County")) #Run this if you want multiple names
-CountySites <- multiname[,c('Subproject','Deployment Name')] #this gives you a list of all the camera deployments in each county
+SubprojectSites <- multiname[,c('Subproject','Deployment Name')] #this gives you a list of all the camera deployments in each Subproject
 
 #specify the species that you are interested in using for boxplots
 spp_interested<-("White-tailed Deer|Coyote|American Black Bear|Northern Raccoon|Domestic Dog|Domestic Cat|Bobcat|Virginia Opossum")
@@ -522,21 +521,21 @@ Boxplot10 + labs(title = "Species Detection Rate for subsetted camera sites", x=
 
 
 
-######## Make a boxplot for multiple specific species across subsetted County #################
-dataCapturecount <- boxplotdata5[,list (Countycount=sum(Capturecount)), by=c('Common Name','Subproject')]
+######## Make a boxplot for multiple specific species across subsetted Subproject #################
+dataCapturecount <- boxplotdata5[,list (Subprojectcount=sum(Capturecount)), by=c('Common Name','Subproject')]
 trapinfo<-  boxplotdata5[,c('TrapNights','Deployment Name','Subproject','Project')]
 trapinfo<-trapinfo[,list(TotalNights=sum(TrapNights)), by="Subproject"]
 trapinfo<-trapinfo[!duplicated(trapinfo$'Subproject'),]
 boxplotdata6<-merge(dataCapturecount, trapinfo, by=('Subproject'))
 
-boxplotdata6$Detection<- boxplotdata6$Countycount / boxplotdata6$TotalNights
+boxplotdata6$Detection<- boxplotdata6$Subprojectcount / boxplotdata6$TotalNights
 
-# Counts of specific species per subset  by County (Subproject)
-Boxplot11<-ggplot(data=boxplotdata6) + geom_boxplot (aes(x=boxplotdata6$'Common Name',y=boxplotdata6$Countycount),fill="deepskyblue4")
+# Counts of specific species per subset  by Subproject (Subproject)
+Boxplot11<-ggplot(data=boxplotdata6) + geom_boxplot (aes(x=boxplotdata6$'Common Name',y=boxplotdata6$Subprojectcount),fill="deepskyblue4")
 Boxplot11 + labs(title = "Species photographic capture count for subsetted counties", x='Species', y='Photographic Capture Count') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
 
 
-# Detection Rate of specific species per subset by County (Subproject)
+# Detection Rate of specific species per subset by Subproject (Subproject)
 Boxplot12<-ggplot(data=boxplotdata6) + geom_boxplot (aes(x=boxplotdata6$'Common Name',y=boxplotdata6$Detection),fill="deepskyblue4")
 Boxplot12 + labs(title = "Species Detection Rate for subsetted counties", x='Species', y='Detection Rate') + theme(axis.text.x=element_text(angle=90, size=7, vjust=0.55))
 
@@ -566,7 +565,7 @@ unique(data$'Common Name')
 
 species<-"Coyote"
 data.sp <- subset(data, data$'Common Name' == species)
-s<-data.sp[, -c(2:10, 12:14, 18:24)]
+s<-data.sp[, -c(2:10, 12:14, 18:23)]
 
 #Add list of empty cameras back to species subset
 cam<-subset(data, !(data$'Deployment Name' %in% data.sp$'Deployment Name'))
@@ -765,10 +764,10 @@ Boot.Bias
 
 #use bootCI to calculate confidence intervals for D.hat / boot data
 
-Conf.deer.coyote <- coyote.Deer.boot [, 1]
-bootCI(D.hat.estimates[1], Conf.deer.coyote, conf = 0.95)
+Conf.deer.coyote <- coyote.Deer.boot [, 2]
+bootCI(D.hat.estimates[2], Conf.deer.coyote, conf = 0.95)
 
-#NOTE if you are using the D.hat4 you will replace the 1 in the above code with 2
+#NOTE if you are using the D.hat1 you will replace the 2 in the above code with 1
 
 #bootCI produces additional confidence intervals other than perc (basic and Norm)
 #These values are inteded to use with a bias-corrected estimator. All the confidence
@@ -798,7 +797,8 @@ compareAct(list(fdeer, fcoyote))
 
 #To calculate the observed overlap index and the probability observed index 
 
-compareCkern(Deer$radians, Coyote$radians, reps = 1000, index = "Dhat4", "Dhat5", "Dhat1")
+
+compareCkern(Deer$radians, Coyote$radians, reps = 10, index = "Dhat4") #if using Dhat1, replace Dhat4 with Dhat1
 
 
 ######### Generating kernel density plot w/ CI, SE, and Bootstrapping ##########
