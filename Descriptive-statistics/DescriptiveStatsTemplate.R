@@ -7,7 +7,7 @@
 #If you do not have one of these packages you can install with the following code:
 list.of.packages<-c("data.table","dplyr",'xtable','reshape2',"ggplot2",'ggmap','overlap','activity','camtrapR','rgdal')
 new.packages<-list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages))installed.packages(new.packages)
+if(length(new.packages))install.packages(new.packages)
 
 library(data.table)
 library(xtable)
