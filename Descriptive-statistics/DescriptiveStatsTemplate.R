@@ -101,17 +101,17 @@ rrate<-rate_input[grep(remove_spp, rate_input$'Common Name', invert=T),]   #inve
 #Make graph showing total capture counts
 rrate<-rrate[order(-rrate$sum)]
 head(rrate)
-Countgraph1 <- ggplot(data=rrate, aes(x=reorder(rrate$'Common Name', sum), y=sum)) +
+print(Countgraph1 <- ggplot(data=rrate, aes(x=reorder(rrate$'Common Name', sum), y=sum)) +
   geom_bar(stat="identity", color="black", 
            fill="steelblue")+
   theme_classic() + 
   labs(x="Species", 
        y = "Total Count")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1, color="black"))+
-  theme(axis.text.y = element_text(color="black"))
+  theme(axis.text.y = element_text(color="black")))
 
-Countgraph1
-ggsave("Countgraph1.png", width = 20, height = 20, units = "cm")
+#To save plot, run line 114
+#ggsave("Countgraph1.png", width = 20, height = 20, units = "cm")
 
 
 
