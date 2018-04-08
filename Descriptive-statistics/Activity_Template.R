@@ -131,8 +131,7 @@ coyote.bootstrap <- resample (Coyote$radians, 1000)
 dim(coyote.bootstrap)
 
 
-#Both of the sample species have lengths greater than 75 observations so Dhat4 (NA,1,NA) should be used.
-#If less than 75 observations, use Dhat1 (1,NA,NA)
+#Both of the sample species have lengths greater than 75 observations so Dhat4 (NA,1,NA) should be used.o#If less than 75 observations, use Dhat1 (1,NA,NA)
 coyote.Deer.boot <- bootEst(coyote.bootstrap, Deer.bootstrap, adjust = c (NA,1,NA))
 dim(coyote.Deer.boot)
 Boot.mean <- colMeans (coyote.Deer.boot)
@@ -188,7 +187,7 @@ compareCkern(Deer$radians, Coyote$radians, reps = 1000, index = "Dhat4") #if usi
 ######### Generating kernel density plot w/ CI, SE, and Bootstrapping ##########
 
 
-#to generate a kernel density plot that incorporates COnfidence intervals, standard
+#to generate a kernel density plot that incorporates confidence intervals, standard
 #Error and Bootstrapping
 
 plot(fdeer)
