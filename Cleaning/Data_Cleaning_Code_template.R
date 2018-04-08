@@ -19,13 +19,13 @@ library(dplyr)
 
 #First set the working directory where the data is stored and where
 #your output will be saved
-setwd("E:/Grad School/Candid Critters Project/Descriptive Stats Code")
+setwd("F:/Grad School/Candid Critters Project/Decoy Project/Code")
 
 #Load the latest dataset downloaded from the website
 #Note that the filename will change each time so make sure it is
 #edited properly below. ~~~ Please see ingest in CandidCritters Github to learn how to extract data from eMammal 
 #Or use the given data csv given with this template to use with this code. 
-dat <-fread(file="sianctapi-selected-observations-5a4bf68d007dc.csv")
+dat <-fread(file="sianctapi-selected-observations-5ac79e65f13ce.csv")
 dat<-as.data.table(dat)
 names(dat)#these are the column names
 unique(dat$Subproject)#these are the counties in the dataset
@@ -44,7 +44,7 @@ dat[ ,c("Begin Time","End Time") :=NULL]
 
 
 #Fix misspelled county names
-data$'Subproject'[data$'Subproject' == 'Allegheny County'] <- 'Alleghany County'
+dat$'Subproject'[dat$'Subproject' == 'Allegheny County'] <- 'Alleghany County'
 
 #Determining Deployment Start and End times/dates
 SiteInfo <- dat[,c('Subproject','Deployment Name','Treatment', 'Deploy ID', 'Actual Lon', 'Actual Lat', 'Begin', 'End')]
@@ -75,7 +75,7 @@ head(SiteInfo)
 
 
 #create a .csv for data on camera site information only data
-write.csv(SiteInfo, file = "E:/Grad School/Candid Critters Project/Descriptive Stats Code/SiteInfo.csv", row.names = FALSE) 
+write.csv(SiteInfo, file = "F:/Grad School/Candid Critters Project/Decoy Project/Code/SiteInfo.csv", row.names = FALSE) 
 
 
 #Merge Site Infomation with your subsetted dataframe
@@ -118,12 +118,6 @@ data$TI<-NULL
 data$RM<-NULL
 head(data)
 
-#Another option is to subset the data based on a min and max allowance of deployment nights
-#Remove any sites that have less than 7 days of trap nights or above 250 days
-#This is a simple check to remove any sites that did not function correctly or
-#have an issue that needs to be reviewed
-data<- subset(data, TrapNights>= 7)    
-data<- subset(data, !TrapNights>=250)
 
 
 ##Checking Species
@@ -149,4 +143,4 @@ tail(data, n=30) #These are the last 30 lines of your data
 #Save your saved data in a .csv file to use with other code templates
 #To name the file before saving just change the path to the path you want to save the data at.
 #Replace where I wrote eMammaldata with your desired name. Make sure .csv follows it. 
-write.csv(data, file = "E:/Grad School/Candid Critters Project/Descriptive Stats Code/eMammaldata.csv", row.names = FALSE) 
+write.csv(data, file = "F:/Grad School/Candid Critters Project/Decoy Project/Code/eMammaldata.csv", row.names = FALSE) 
