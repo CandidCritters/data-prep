@@ -11,6 +11,8 @@ setwd("F:/Grad School/Candid Critters Project/Decoy Project/Code")
 
 #Load packages
 library(data.table)
+library(dplyr)
+library(ggmap)
 
 
 #Load the dataset you want to get descriptive information on. For this example
@@ -79,3 +81,20 @@ TotalTrapNights<- SiteInfo[,sum(TrapNights), by='Project']
 names(TotalTrapNights)<-c("Total Trap Nights", "Camera Nights")
 TotalTrapNights
 
+
+
+###### Mapping out the camera locations 
+
+#Define the map area
+latrange = range(SiteInfo$'Actual Lat') + c(-0.15,0.15)
+lonrange = range(SiteInfo$'Actual Lon') + c(-0.15,0.15)
+extent = c(lonrange[1],latrange[1],lonrange[2],latrange[2])
+m = get_map(extent, maptype="terrain")
+ggmap(m)
+
+cameramap<-ggmap(m) + geom_point(data= SiteInfo, aes(x=SiteInfo$'Actual Lon',y=SiteInfo$'Actual Lat'))+
+        theme(text=element_text(size=12))+
+        labs(x = "Longitude",y = "Latitude", title="Camera Site Locations")+
+        theme(axis.text = element_text(color="black"))
+
+cameramap
