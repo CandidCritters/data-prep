@@ -13,7 +13,7 @@
 
 #First set the working directory where the data is stored and where
 #your output will be saved
-setwd("F:/Grad School/Candid Critters Project/Descriptive Stats Code")
+setwd("C:/Users/hmboo/Desktop/Activity")
 
 
 #Load the necessary packages
@@ -28,7 +28,7 @@ library(overlap)
 #edited properly below
 data <-fread(file="eMammaldata.csv")
 names(data)#these are the column names
-levels(data$Subproject)#these are the counties in the dataset
+unique(data$Subproject)#these are the counties in the dataset
 head(data, n=5) #These are the first 30 lines of your data
 tail(data, n=5) #These are the last 30 lines of your data
 
@@ -131,7 +131,8 @@ coyote.bootstrap <- resample (Coyote$radians, 1000)
 dim(coyote.bootstrap)
 
 
-#Both of the sample species have lengths greater than 75 observations so Dhat4 (NA,1,NA) should be used.o#If less than 75 observations, use Dhat1 (1,NA,NA)
+#Both of the sample species have lengths greater than 75 observations so Dhat4 (NA,1,NA) should be used.
+#If less than 75 observations, use Dhat1 (1,NA,NA)
 coyote.Deer.boot <- bootEst(coyote.bootstrap, Deer.bootstrap, adjust = c (NA,1,NA))
 dim(coyote.Deer.boot)
 Boot.mean <- colMeans (coyote.Deer.boot)
@@ -165,12 +166,16 @@ bootCI(D.hat.estimates[2], Conf.deer.coyote, conf = 0.95)
 
 #to compare activity across certain desired parts of the day per species: reps 
 # represents bootstrapping amount
-fdeer <- fitact (Deer$radians, reps = 1000)
+
+
+fdeer <- fitact (Deer$radians, sample="data", reps = 100)
+fdeer@act
+plot(fdeer)
 compareTimes(fdeer, c(5.5,6, 0.5, 1))
-fcoyote <- fitact (Coyote$radians, reps = 1000)
+fcoyote <- fitact (Coyote$radians, sample='data', reps = 500)
+fcoyote@act
 compareTimes(fcoyote, c(5.5, 6, 0.5, 1))
-
-
+plot(fcoyote)
 
 #To test whether a species has a significantly different activity level from another
 #Use the following code to estimate the statistical difference using a Wald Test
@@ -181,20 +186,16 @@ compareAct(list(fdeer, fcoyote))
 #To calculate the observed overlap index and the probability observed index 
 
 
-compareCkern(Deer$radians, Coyote$radians, reps = 1000, index = "Dhat4") #if using Dhat1, replace Dhat4 with Dhat1
-
+compareCkern(fdeer, fcoyote, reps = 100)
 
 ######### Generating kernel density plot w/ CI, SE, and Bootstrapping ##########
 
 
-#to generate a kernel density plot that incorporates confidence intervals, standard
+#to generate a kernel density plot that incorporates COnfidence intervals, standard
 #Error and Bootstrapping
 
 plot(fdeer)
 plot(fcoyote)
 plot(fdeer, add = T, lcol= 3)
-
-
-
 
 
