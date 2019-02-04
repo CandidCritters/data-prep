@@ -46,7 +46,7 @@ emammaldat[ ,c("Begin Time","End Time") :=NULL]
 
 
 #Determining Deployment Start and End times/dates
-emammalsite <- emammaldat[,c('Project', 'Subproject','Deployment Name','Treatment', 'Deploy ID', 'Actual Lon', 'Actual Lat', 'Begin', 'End')]
+emammalsite <- emammaldat[,c('Project', 'Subproject','Deployment Name','Treatment', 'Deployment ID', 'Actual Lon', 'Actual Lat', 'Begin', 'End')]
 #Start Times extraction
 StartTime<-emammalsite[order(Begin)]   #Orders entries by chronological order
 StartTime<- StartTime[order(StartTime$'Deployment Name')]  #groups by Deployment name
@@ -62,7 +62,7 @@ EndTime$Begin <-NULL
 
 
 #Generating a Site Information Dataframe
-emammalsite <- merge(StartTime, EndTime, by =c('Project','Subproject','Deployment Name','Treatment', 'Deploy ID', 'Actual Lon', 'Actual Lat'))
+emammalsite <- merge(StartTime, EndTime, by =c('Project','Subproject','Deployment Name','Treatment', 'Deployment ID', 'Actual Lon', 'Actual Lat'))
 setDT(emammalsite)[,paste0("Begin.Time",1:2):= tstrsplit(Begin," ")] #Splits the time stamp into Date and Time Columns
 setDT(emammalsite)[,paste0("End.Time",1:2):= tstrsplit(End," ")]
 setnames(emammalsite, old = c('Begin.Time1','Begin.Time2', 'End.Time1', 'End.Time2'), new = c('Deployment.Date','Deployment.Time', 'Retrieval.Date','Retrieval.Time')) #Renames the new columns 
@@ -78,7 +78,7 @@ write.csv(emammalsite, file = "emammalSiteInfo.csv", row.names = FALSE)
 
 
 #Merge Site Infomation with your subsetted dataframe
-emammaldata<- merge(emammaldat, emammalsite, by =c('Project','Subproject','Deployment Name','Treatment', 'Deploy ID', 'Actual Lon', 'Actual Lat'))
+emammaldata<- merge(emammaldat, emammalsite, by =c('Project','Subproject','Deployment Name','Treatment', 'Deployment ID', 'Actual Lon', 'Actual Lat'))
 
 
 
@@ -135,7 +135,7 @@ names(emammaldata)
 
 
 #Save cleaned emammal data and site data
-setnames(emammaldata, old = c('Deployment Name','Deploy ID', 'Actual Lon','Actual Lat', 'ID Type', 'Sequence ID', 'Species Name', 'Common Name'), new = c('Deployment.Name','Deploy.ID', 'Actual.Lon','Actual.Lat','ID.Type', 'Sequence.ID', 'Species.Name','Common.Name'))
+setnames(emammaldata, old = c('Deployment Name','Deployment ID', 'Actual Lon','Actual Lat', 'ID Type', 'Sequence ID', 'Species Name', 'Common Name'), new = c('Deployment.Name','Deploy.ID', 'Actual.Lon','Actual.Lat','ID.Type', 'Sequence.ID', 'Species.Name','Common.Name'))
 
 emammalsiteinfo <- emammaldata[,c('Subproject','Deployment.Name','Actual.Lon', 'Actual.Lat','Deployment.Time','Deployment.Date','Retrieval.Date','Retrieval.Time','TrapNights')]
 emammalsite<-emammalsiteinfo[!duplicated(emammalsiteinfo$'Deployment.Name'), ]  #Remove duplicated lines for a single site
