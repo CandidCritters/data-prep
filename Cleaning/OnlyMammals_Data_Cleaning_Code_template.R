@@ -54,7 +54,7 @@ head(data, n=5) #Check dat for new columns formated correctly
 data[ ,c("Begin Time","End Time") :=NULL]
 
 #Determining Deployment Start and End times/dates
-SiteInfo <- data[,c('Subproject','Deployment Name','Treatment', 'Deploy ID', 'Actual Lon', 'Actual Lat', 'Begin', 'End')]
+SiteInfo <- data[,c('Subproject','Deployment Name','Treatment', 'Deployment ID', 'Actual Lon', 'Actual Lat', 'Begin', 'End')]
 #Start Times extraction
 StartTime<-SiteInfo[order(Begin)]   #Orders entries by chronological order
 StartTime<- StartTime[order(StartTime$'Deployment Name')]  #groups by Deployment name
@@ -70,7 +70,7 @@ EndTime$Begin <-NULL
 
 
 #Generating a Site Information Dataframe
-SiteInfo <- merge(StartTime, EndTime, by =c('Subproject','Deployment Name','Treatment', 'Deploy ID', 'Actual Lon', 'Actual Lat'))
+SiteInfo <- merge(StartTime, EndTime, by =c('Subproject','Deployment Name','Treatment', 'Deployment ID', 'Actual Lon', 'Actual Lat'))
 setDT(SiteInfo)[,paste0("Begin.Time",1:2):= tstrsplit(Begin," ")] #Splits the time stamp into Date and Time Columns
 setDT(SiteInfo)[,paste0("End.Time",1:2):= tstrsplit(End," ")]
 setnames(SiteInfo, old = c('Begin.Time1','Begin.Time2', 'End.Time1', 'End.Time2'), new = c('Deployment.Date','Deployment.Time', 'Retrieval.Date','Retrieval.Time')) #Renames the new columns 
@@ -82,7 +82,7 @@ head(SiteInfo)
 
 
 #Merge Site Infomation with your subsetted dataframe
-data1<- merge(data, SiteInfo, by =c('Subproject','Deployment Name','Treatment', 'Deploy ID', 'Actual Lon', 'Actual Lat'))
+data1<- merge(data, SiteInfo, by =c('Subproject','Deployment Name','Treatment', 'Deployment ID', 'Actual Lon', 'Actual Lat'))
 
 
 
